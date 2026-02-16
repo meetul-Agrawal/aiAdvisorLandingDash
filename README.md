@@ -1,141 +1,182 @@
-# Tally ERP Dashboard - MVP DBMS Structure
+# Tally ERP Dashboard - MVP
 
-Complete database schema for Tally ERP Dashboard with all 9 tabs and comprehensive reporting views.
+A comprehensive React-based dashboard for visualizing Tally ERP data with interactive charts, tables, and drill-down capabilities.
 
-## 📁 Files Overview
+## Project Structure
 
-| File | Description |
-|------|-------------|
-| `dashboard_mvp_complete.sql` | **Main file** - Complete schema with all views, functions, and indexes |
-| `dashboard_mvp_schema.sql` | Original schema file (legacy) |
-| `sample_dashboard_queries.sql` | Sample queries for all dashboard tabs |
-| `api_structure.md` | REST API endpoint documentation |
-
-## 🗂️ Dashboard Structure
-
-### Tab 1: Summary
-- **Current Cash & Bank Balances**: `vw_cash_bank_balances`
-- **Cash/Bank Transactions**: `vw_cash_bank_transactions` (with date, party, type, amount)
-- **Inventory Management**: `vw_inventory_summary` (drill-down by date, stock item, party)
-- **Payables Summary**: `vw_payables_summary` (with aging details)
-
-### Tab 2: Need Attention
-- **Inactive Customers**: `vw_inactive_customers` (90+ days no transaction)
-- **Inactive Stocks**: `vw_inactive_stocks` (90+ days no movement)
-
-### Tab 3: Sales & Receivables
-- **Sales Summary**: `vw_sales_summary`
-- **Receivables Summary**: `vw_receivables_summary` (with aging buckets)
-- **Drill-down**: `vw_sales_receivables_drilldown` (by month, party)
-
-### Tab 4: Top 10
-| View | Purpose |
-|------|---------|
-| `vw_top_customers_by_value` | Top customers by sales value |
-| `vw_top_suppliers_by_value` | Top suppliers by purchase value |
-| `vw_top_items_by_quantity` | Top items sold by quantity |
-| `vw_top_items_by_value` | Top items sold by value |
-| `vw_top_items_purchase_qty` | Top items purchased by quantity |
-| `vw_top_items_purchase_value` | Top items purchased by value |
-
-### Tab 5: Sales
-Covers: Sales, Credit Note, Receipt, Receivables, Sales Order, Delivery Note
-- **All Documents**: `vw_sales_documents`
-- **Receivables Aging**: `vw_receivables_aging`
-- **Sales Orders**: `vw_sales_orders`
-
-### Tab 6: Purchase
-Covers: Purchase, Debit Note, Payment, Payables, Purchase Order, Receipt Note
-- **All Documents**: `vw_purchase_documents`
-- **Payables Aging**: `vw_payables_aging`
-- **Purchase Orders**: `vw_purchase_orders`
-
-### Tab 7: Cash & Bank
-- **Cash Position**: `vw_cash_position` (with MTD inflow/outflow)
-- **Bank Position**: `vw_bank_position` (with account details)
-- **Daily Cash Flow**: `vw_cash_flow_daily`
-- **Bank Allocations**: `vw_bank_allocation_details`
-
-### Tab 8: Parties
-- **Party Master**: `vw_party_master` (complete party details with summary)
-- **Transaction History**: `vw_party_transactions`
-- **Outstanding Statement**: `vw_party_outstanding`
-
-### Tab 9: Items
-- **Stock Item Master**: `vw_stock_item_master` (with totals, status)
-- **Movement History**: `vw_item_movement_history`
-- **Category Summary**: `vw_stock_summary_by_category`
-- **Low Stock Alert**: `vw_low_stock_alert`
-
-## 🔧 Key Functions
-
-### `get_dashboard_kpis(company_id UUID)`
-Returns comprehensive KPIs including:
-- Cash & Bank totals
-- Receivables & Payables
-- MTD Sales, Purchases, Receipts, Payments
-- Gross Profit
-- Active items/parties counts
-- Alert counts (inactive customers/stocks, low stock, overdue)
-
-```sql
-SELECT * FROM get_dashboard_kpis('your-company-uuid');
+```
+project/
+├── dashboard/                    # React Dashboard Application
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Sidebar.jsx       # Navigation sidebar
+│   │   │   ├── Header.jsx        # Top header bar
+│   │   │   └── tabs/
+│   │   │       ├── SummaryTab.jsx           # Dashboard summary
+│   │   │       ├── NeedAttentionTab.jsx     # Inactive customers/stock
+│   │   │       ├── SalesReceivablesTab.jsx  # Sales & receivables
+│   │   │       ├── Top10Tab.jsx             # Top 10 rankings
+│   │   │       ├── SalesTab.jsx             # Sales documents
+│   │   │       ├── PurchaseTab.jsx          # Purchase documents
+│   │   │       ├── CashBankTab.jsx          # Cash & bank accounts
+│   │   │       ├── PartiesTab.jsx           # Party master
+│   │   │       └── ItemsTab.jsx             # Stock items
+│   │   ├── data/
+│   │   │   └── dummyData.js      # Dummy data matching DB schema
+│   │   ├── styles/
+│   │   │   └── dashboard.css     # Dashboard styles
+│   │   ├── App.jsx               # Main app component
+│   │   └── main.jsx              # Entry point
+│   ├── index.html
+│   ├── package.json
+│   └── README.md
+│
+├── dashboard_mvp_schema.sql      # PostgreSQL views and functions
+├── dashboard_mvp_complete.sql    # Complete database schema
+├── mvp.md                        # MVP documentation
+└── README.md                     # This file
 ```
 
-### `get_monthly_trends(company_id UUID, months INTEGER)`
-Returns monthly performance trends for specified number of months.
+## Features
 
-```sql
-SELECT * FROM get_monthly_trends('your-company-uuid', 12);
-```
+### 9 Interactive Dashboard Tabs
 
-### Helper Functions
-- `days_since_last_transaction(ledger_name, company_id)`
-- `stock_last_movement_date(stock_item_name, company_id)`
-- `get_ledger_balance_as_of(ledger_name, company_id, as_of_date)`
-- `get_financial_year(company_id, date)`
+1. **Summary Tab**
+   - Cash & Bank balances with transaction history
+   - Inventory management with drill-downs
+   - Payables summary
+   - Monthly trend charts with Area, Bar, and Pie charts
+   - KPI cards with key metrics
 
-## 🚀 Quick Start
+2. **Need Attention Tab**
+   - Inactive customers (90+ days no transactions)
+   - Inactive stock items (90+ days no movement)
+   - Outstanding balance tracking
+   - Recommended actions with action buttons
 
-### 1. Run the Schema
+3. **Sales & Receivables Tab**
+   - Sales summary with invoice details
+   - Receivables aging analysis
+   - Customer-wise drill-downs
+   - Collection tracking
+
+4. **Top 10 Lists**
+   - Top 10 Customers by Value
+   - Top 10 Suppliers by Value
+   - Top 10 Items Sold by Quantity
+   - Top 10 Items Sold by Value
+   - Top 10 Items Purchased by Quantity
+   - Top 10 Items Purchased by Value
+
+5. **Sales Tab**
+   - Sales invoices, Credit Notes, Receipts
+   - Receivables aging
+   - Sales Orders, Delivery Notes
+   - Multi-sub-tab navigation
+
+6. **Purchase Tab**
+   - Purchase bills, Debit Notes, Payments
+   - Payables aging
+   - Purchase Orders, Receipt Notes
+   - Multi-sub-tab navigation
+
+7. **Cash & Bank Tab**
+   - Cash position summary
+   - Bank account summary
+   - Daily cash flow with composed charts
+   - Transaction history
+   - Liquidity analysis
+
+8. **Parties Tab**
+   - Customer master with balances
+   - Supplier master with balances
+   - Contact information (GSTIN, Email, Phone)
+   - Transaction history
+   - Party-wise drill-down modal
+
+9. **Items Tab**
+   - Stock item master
+   - Inventory by category with pie/bar charts
+   - Low stock alerts
+   - Item movement history
+   - Stock valuation
+   - Item detail modal
+
+## Tech Stack
+
+- **React 19** - UI Framework
+- **Vite 7** - Build Tool
+- **Recharts** - Charts & Graphs (Bar, Line, Area, Pie, Composed)
+- **Lucide React** - Icons
+- **CSS Variables** - Styling with custom properties
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
 ```bash
-psql -U your_user -d your_database -f dashboard_mvp_complete.sql
+cd dashboard
+npm install
+npm run dev
 ```
 
-### 2. Get Dashboard Data
-```sql
--- Get all KPIs
-SELECT * FROM get_dashboard_kpis('your-company-uuid');
+The dashboard will be available at `http://localhost:5173`
 
--- Get cash position
-SELECT * FROM vw_cash_position WHERE company_id = 'your-company-uuid';
+### Building for Production
 
--- Get top 10 customers
-SELECT * FROM vw_top_customers_by_value 
-WHERE company_id = 'your-company-uuid' AND rank <= 10;
+```bash
+npm run build
 ```
 
-## 📊 Sample Queries
+## Database Views Reference
 
-See `sample_dashboard_queries.sql` for complete query examples for all tabs.
+The dashboard corresponds to these PostgreSQL views (defined in `dashboard_mvp_schema.sql`):
 
-## 🔌 API Integration
+| View Name | Purpose |
+|-----------|---------|
+| `vw_cash_bank_balances` | Current cash & bank balances |
+| `vw_cash_bank_transactions` | Transaction history |
+| `vw_inventory_summary` | Inventory movements |
+| `vw_payables_summary` | Payables to suppliers |
+| `vw_inactive_customers` | Customers with 90+ days inactivity |
+| `vw_inactive_stocks` | Stock items with 90+ days no movement |
+| `vw_sales_summary` | Sales invoice summary |
+| `vw_receivables_summary` | Customer receivables |
+| `vw_top_customers_by_value` | Top customers ranking |
+| `vw_top_suppliers_by_value` | Top suppliers ranking |
+| `vw_top_items_by_quantity` | Top items by quantity sold |
+| `vw_top_items_by_value` | Top items by sales value |
+| `vw_sales_documents` | All sales documents |
+| `vw_purchase_documents` | All purchase documents |
+| `vw_cash_position` | Cash account summary |
+| `vw_bank_position` | Bank account summary |
+| `vw_party_master` | Party/ledger master |
+| `vw_stock_item_master` | Stock item master |
+| `vw_item_movement_history` | Item transaction history |
 
-See `api_structure.md` for REST API endpoint documentation.
+## Dummy Data
 
-Base URL: `/api/v1/dashboard`
+The dashboard includes comprehensive dummy data in `src/data/dummyData.js` that mirrors the Tally ERP database structure:
+- 8 stock items across multiple categories
+- 7 party records (customers, suppliers, others)
+- 8 cash & bank transactions
+- 8 inventory movements
+- 10 customers in top lists
+- 10 suppliers in top lists
+- Monthly trend data for 6 months
 
-## ⚡ Performance
+## Responsive Design
 
-The schema includes optimized indexes for:
-- Date range queries
-- Party/ledger lookups
-- Inventory item searches
-- Category aggregations
+- Collapsible sidebar for mobile devices
+- Responsive grid layouts
+- Adaptive tables with horizontal scroll
+- Touch-friendly controls
+- Print-friendly styles
 
-## 📝 Notes
+## License
 
-- All views include `company_id` for multi-tenant filtering
-- Soft-deleted records (is_deleted = TRUE) are automatically filtered
-- Encrypted fields (GSTIN, PAN) maintain their encryption in views
-- All monetary values use DECIMAL(18,4) for precision
+MIT
